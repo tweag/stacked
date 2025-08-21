@@ -6,7 +6,7 @@
 {-# LANGUAGE UndecidableInstances #-}
 {-# LANGUAGE UndecidableSuperClasses #-}
 
-module Generic where
+module Control.Monad.Indexed.Lead.Generic where
 
 import Control.Monad.Indexed qualified as Indexed
 import Data.Kind

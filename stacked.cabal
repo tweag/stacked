@@ -21,7 +21,7 @@ library
       Control.Monad.Indexed
       Control.Monad.Indexed.Cont
       Control.Monad.Indexed.Cont2
-      Generic
+      Control.Monad.Indexed.Lead.Generic
   other-modules:
       Paths_stacked
   hs-source-dirs:
