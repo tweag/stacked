@@ -17,7 +17,6 @@ build-type:     Simple
 library
   exposed-modules:
       Control.Additive
-      Control.Comonad.Weave
       Control.Monad.Indexed
       Control.Monad.Indexed.Cont
       Control.Monad.Indexed.Cont2
