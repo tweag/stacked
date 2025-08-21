@@ -1,0 +1,21 @@
+name:                stacked
+version:             0.1.0
+author:              ["Mathieu Boespflug", "Arnaud Spiwack"]
+maintainer:          arnaud.spiwack@tweag.io
+copyright:           "MIT"
+
+language: GHC2021
+
+dependencies:
+  - base
+  - comonad
+  - mtl
+  - megaparsec
+  - containers
+  - prettyprinter
+  - text
+
+library:
+  source-dirs: src
+
+ghc-options: "-Wall"

@@ -1,0 +1,38 @@
+cabal-version: 1.12
+
+-- This file has been generated from package.yaml by hpack version 0.37.0.
+--
+-- see: https://github.com/sol/hpack
+
+name:           stacked
+version:        0.1.0
+author:         Mathieu Boespflug,
+                Arnaud Spiwack
+maintainer:     arnaud.spiwack@tweag.io
+copyright:      MIT
+license:        MIT
+license-file:   LICENSE
+build-type:     Simple
+
+library
+  exposed-modules:
+      Control.Additive
+      Control.Comonad.Weave
+      Control.Monad.Indexed
+      Control.Monad.Indexed.Cont
+      Control.Monad.Indexed.Cont2
+      Generic
+  other-modules:
+      Paths_stacked
+  hs-source-dirs:
+      src
+  ghc-options: -Wall
+  build-depends:
+      base
+    , comonad
+    , containers
+    , megaparsec
+    , mtl
+    , prettyprinter
+    , text
+  default-language: GHC2021
