@@ -6,8 +6,7 @@ cabal-version: 1.12
 
 name:           stacked
 version:        0.1.0
-author:         Mathieu Boespflug,
-                Arnaud Spiwack
+author:         Arnaud Spiwack
 maintainer:     arnaud.spiwack@tweag.io
 copyright:      MIT
 license:        MIT
