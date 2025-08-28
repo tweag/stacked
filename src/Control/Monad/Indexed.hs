@@ -10,7 +10,7 @@ module Control.Monad.Indexed where
 import Control.Additive
 import Control.Applicative qualified as Applicative
 import Control.Monad qualified as Monad
-import Prelude hiding (Applicative (..), Monad (..))
+import Prelude hiding (Applicative (..), Monad (..), MonadFail (..))
 import Prelude qualified
 
 class (forall i j. Functor (f i j), forall i. Prelude.Applicative (f i i)) => Applicative f where
@@ -35,7 +35,21 @@ class (forall i j. Functor (f i j), forall i. Prelude.Applicative (f i i)) => Ap
 class (Applicative m, forall i. Prelude.Monad (m i i)) => Monad m where
   (>>=) :: m i j a -> (a -> m j k b) -> m i k b
 
+-- | This class is mainly used for the qualified `do`-notation, as described in
+-- the documentation for 'Prelude.MonadFail'. Occasionally used to fail with an
+-- error message in monads which support it, see for instance 'guardF' below.
+class (Monad m) => MonadFail m where
+  fail :: String -> m i j a
+
+guardF :: (MonadFail m) => Bool -> String -> m i i ()
+guardF True _ = pure ()
+guardF False msg = fail msg
+
 type Alternative m = (Applicative m, forall r r' a. Additive (m r r' a))
+
+guard :: (Alternative m) => Bool -> m i i ()
+guard True = pure ()
+guard False = empty
 
 type MonadPlus m = (Monad m, forall r r' a. Additive (m r r' a))
 
@@ -132,6 +146,9 @@ instance (Applicative.Alternative m) => Additive (IgnoreStack m r r' a) where
 instance (Prelude.Applicative m) => Stacked (IgnoreStack m) where
   shift_ _ = IgnoreStack $ Prelude.pure ()
 
+instance (Prelude.MonadFail m) => MonadFail (IgnoreStack m) where
+  fail msg = IgnoreStack $ Prelude.fail msg
+
 data (:*:) f g i j a = (:*:) (f i j a) (g i j a)
   deriving stock (Functor)
 
@@ -163,6 +180,9 @@ instance (Monad f, Monad g) => Monad (f :*: g) where
   ~(a :*: b) >>= k =
     (a >>= \x -> let (r :*: _) = k x in r)
       :*: (b >>= \y -> let (_ :*: s) = k y in s)
+
+instance (MonadFail f, MonadFail g) => MonadFail (f :*: g) where
+  fail msg = fail msg :*: fail msg
 
 instance (Applicative.Alternative (f i j), Applicative.Alternative (g i j)) => Applicative.Alternative ((f :*: g) i j) where
   empty = Applicative.empty :*: Applicative.empty
