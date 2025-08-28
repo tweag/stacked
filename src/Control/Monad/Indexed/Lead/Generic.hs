@@ -25,6 +25,15 @@ class Leading c t where
 
 -- the_constr :: CFieldsType c (Rep t ()) tgt
 
+-- |
+-- == __Manual definitions_
+-- Here are some manual, specialised, definitions of 'lead' for inspiration if
+-- the generic derivation aren't enough.
+--
+-- > lead @True :: (Indexed.MonadPlus m, Indexed.Stacked m) => m (Bool -> r) r Bool
+-- > lead @True = Indexed.do
+-- >   Indexed.stack (\cases _ k True -> k; fl _ b -> fl b) (\k -> k True)
+-- >   Indexed.pure True
 lead :: forall c t r m. (Leading c t, Indexed.MonadPlus m, Indexed.Stacked m) => m (t -> r) (CFieldsType c (Rep t ()) r) (CFieldsType c (Rep t ()) t)
 lead = Indexed.do
   Indexed.stack (match @c @t @r) (unmatch @c @t @r)

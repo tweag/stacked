@@ -20,6 +20,7 @@ library
       Control.Monad.Indexed.Cont
       Control.Monad.Indexed.Cont2
       Control.Monad.Indexed.Lead.Generic
+      Control.Monad.Indexed.Lead.Labels
   other-modules:
       Paths_stacked
   hs-source-dirs:
