@@ -44,6 +44,9 @@ instance (Comonad w) => Shifty (Cont2W w) where
   shift :: (Comonad w) => ((a -> r' -> r') -> r -> Cont2W w r k k) -> Cont2W w r r' a
   shift f = shift0 $ \wk -> f (extract wk)
 
+instance (Shifty f, Shifty g) => Shifty (f Indexed.:*: g) where
+  shift f = (shift (\k fl -> Indexed.fst_star (f k fl))) Indexed.:*: (shift (\k fl -> Indexed.snd_star (f k fl)))
+
 pop :: (Indexed.Applicative m, Shifty m) => m (a -> i) i a
 pop = shift $ \k fl -> Indexed.pure (\a -> k a (fl a))
 
