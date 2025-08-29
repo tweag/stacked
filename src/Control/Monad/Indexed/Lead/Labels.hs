@@ -10,6 +10,7 @@
 module Control.Monad.Indexed.Lead.Labels where
 
 import Control.Monad.Indexed qualified as Indexed
+import Control.Monad.Indexed.Cont2 qualified as Cont2
 import Control.Monad.Indexed.Lead.Generic
 import GHC.Generics
 import GHC.OverloadedLabels
@@ -17,7 +18,7 @@ import GHC.OverloadedLabels
 instance
   ( Leading c t,
     Indexed.MonadPlus m,
-    Indexed.Stacked m,
+    Cont2.Stacked m,
     s ~ (CFieldsType c (Rep t ()) r),
     u ~ (CFieldsType c (Rep t ()) t)
   ) =>

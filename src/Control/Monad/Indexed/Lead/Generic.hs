@@ -16,6 +16,7 @@ module Control.Monad.Indexed.Lead.Generic
 where
 
 import Control.Monad.Indexed qualified as Indexed
+import Control.Monad.Indexed.Cont2 qualified as Cont2
 import Data.Kind
 import GHC.Generics
 import GHC.TypeLits
@@ -37,13 +38,13 @@ class Leading c t where
 -- Here are some manual, specialised, definitions of 'lead' for inspiration if
 -- the generic derivation aren't enough.
 --
--- > lead @True :: (Indexed.MonadPlus m, Indexed.Stacked m) => m (Bool -> r) r Bool
+-- > lead @True :: (Indexed.MonadPlus m, Cont2.Stacked m) => m (Bool -> r) r Bool
 -- > lead @True = Indexed.do
--- >   Indexed.stack (\cases _ k True -> k; fl _ b -> fl b) (\k -> k True)
+-- >   Cont2.stack (\cases _ k True -> k; fl _ b -> fl b) (\k -> k True)
 -- >   Indexed.pure True
-lead :: forall c t r m. (Leading c t, Indexed.MonadPlus m, Indexed.Stacked m) => m (t -> r) (CFieldsType c (Rep t ()) r) (CFieldsType c (Rep t ()) t)
+lead :: forall c t r m. (Leading c t, Indexed.MonadPlus m, Cont2.Stacked m) => m (t -> r) (CFieldsType c (Rep t ()) r) (CFieldsType c (Rep t ()) t)
 lead = Indexed.do
-  Indexed.stack (match @c @t @r) (unmatch @c @t @r)
+  Cont2.stack (match @c @t @r) (unmatch @c @t @r)
   Indexed.pure $ unmatch @c @t @t id
 
 ------------------------------------------------------------------------------

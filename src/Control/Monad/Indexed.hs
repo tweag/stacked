@@ -57,98 +57,6 @@ type MonadPlus m = (Monad m, forall r r' a. Additive (m r r' a))
 (>>) :: (Applicative m) => m i j () -> m j k a -> m i k a
 (>>) = (*>)
 
-class Stacked m where
-  -- Alternative: we could have an Applicative modality `S m`, and a richer shift
-  -- shiftm :: ((S m a -> r' -> r') -> r -> m r r'' r'') -> m r r' (S m a)
-  --
-  -- `S Print = Identity`, and `S Parse = Const ()`. The latter is why we need
-  -- the modality (and why it'd need to be an attached type family). It's kind
-  -- of cool. And you could define
-  --
-  -- pop :: m (a -> i) i (S m a)
-  -- push :: S m a -> m i (a -> i)
-  --
-  -- But is uses a type family, which is always a little bit annoying I suppose.
-  --
-  -- I'm not sure it adds much expressive power, though. It wouldn't be terribly
-  -- convenient to use a value behind such a modality. You might as well just
-  -- use `shift'` honestly.
-  shift_ :: ((r' -> r') -> r -> m r r'' r'') -> m r r' ()
-
-stack :: (Applicative m, Stacked m) => (i -> j -> i) -> (i -> j) -> m i j ()
-stack f unr = shift_ $ \k fl -> pure $ f fl (k (unr fl))
-
-(@) :: (Applicative m, Stacked m) => m (a -> i) j b -> a -> m i j b
-act @ a = stack (\_ s -> s a) (\s _ -> s) *> act
-
-infixl 9 @
-
-push :: (Applicative m, Stacked m) => a -> m i (a -> i) ()
-push a = shift_ $ \k fl -> pure (k (const fl) a)
-
-pop_ :: (Applicative m, Stacked m) => m (a -> i) i ()
-pop_ = shift_ $ \k fl -> pure (\a -> k (fl a))
-
-some :: (Alternative m, Stacked m) => (forall r'. m (a -> r') r' b) -> m ([a] -> r) r [b]
-some a = Control.Monad.Indexed.do
-  stack uncons (\k x xs -> k (x : xs))
-  (:) <$> a <*> many a
-  where
-    uncons fl _k [] = fl []
-    uncons _fl k (x : xs) = k x xs
-
-many :: (Alternative m, Stacked m) => (forall r'. m (a -> r') r' b) -> m ([a] -> r) r [b]
-many a = some a <|> (pop_ *> pure [])
-
-optional :: (Alternative m, Stacked m) => (forall r'. m (a -> r') r' b) -> m (Maybe a -> r) r (Maybe b)
-optional a =
-  (justLead <*> a) <|> nothingLead
-  where
-    -- TODO: reorder module so that these can be derived.
-    justLead = Control.Monad.Indexed.do
-      stack (\cases _ k (Just x) -> k x; fl _ b -> fl b) (\k x -> k (Just x))
-      pure Just
-    nothingLead = Control.Monad.Indexed.do
-      stack (\cases _ k Nothing -> k; fl _ b -> fl b) (\k -> k Nothing)
-      pure Nothing
-
-sepBy :: (MonadPlus m, Stacked m) => (forall r'. m (a -> r') r' b) -> (forall r'. m r' r' ()) -> m ([a] -> r) r [b]
-sepBy p sep = Control.Monad.Indexed.do
-  -- TODO: I don't know whether cheating on the unroll can be a
-  -- problem. Replacing by a direct call to shift would solve that I suppose.
-  stack (\cases _ k (x : xs) -> k (Just x) xs; _ k [] -> k Nothing (error "Why did this not pop?")) (\k _x xs -> k xs)
-  r <- optional p
-  case r of
-    Nothing -> pop_ >> pure []
-    Just x -> Control.Monad.Indexed.do
-      (x :) <$> many (sep *> p)
-
-newtype IgnoreStack m i j a = IgnoreStack {unIgnoreStack :: m a}
-  deriving newtype
-    ( Functor,
-      Prelude.Applicative,
-      Prelude.Monad,
-      Applicative.Alternative,
-      Monad.MonadPlus
-    )
-
-instance (Prelude.Applicative f) => Applicative (IgnoreStack f) where
-  pure a = IgnoreStack $ Prelude.pure a
-  IgnoreStack f <*> IgnoreStack a = IgnoreStack $ f Prelude.<*> a
-
-instance (Prelude.Monad m) => Monad (IgnoreStack m) where
-  IgnoreStack a >>= k = IgnoreStack $ a Prelude.>>= \x -> unIgnoreStack (k x)
-
-instance (Applicative.Alternative m) => Additive (IgnoreStack m r r' a) where
-  empty = IgnoreStack Applicative.empty
-  (IgnoreStack a) <|> (IgnoreStack b) = IgnoreStack $ a Applicative.<|> b
-
-instance (Prelude.Applicative m) => Stacked (IgnoreStack m) where
-  shift_ _ = IgnoreStack $ Prelude.pure ()
-
-instance (Prelude.MonadFail m) => MonadFail (IgnoreStack m) where
-  fail msg = IgnoreStack $ Prelude.fail msg
-
 data (:*:) f g i j a = (:*:) (f i j a) (g i j a)
   deriving stock (Functor)
 
@@ -194,8 +102,28 @@ instance (Additive (f r r' a), Additive (g r r' a)) => Additive ((f :*: g) r r' 
   empty = empty :*: empty
   ~(a :*: a') <|> ~(b :*: b') = (a <|> b) :*: (a' <|> b')
 
-instance (Stacked f, Stacked g) => Stacked (f :*: g) where
-  shift_ f = (shift_ (\s fl' -> fst_star (f s fl'))) :*: (shift_ (\s fl' -> snd_star (f s fl')))
+newtype IgnoreStack m i j a = IgnoreStack {unIgnoreStack :: m a}
+  deriving newtype
+    ( Functor,
+      Prelude.Applicative,
+      Prelude.Monad,
+      Applicative.Alternative,
+      Monad.MonadPlus
+    )
+
+instance (Prelude.Applicative f) => Applicative (IgnoreStack f) where
+  pure a = IgnoreStack $ Prelude.pure a
+  IgnoreStack f <*> IgnoreStack a = IgnoreStack $ f Prelude.<*> a
+
+instance (Prelude.Monad m) => Monad (IgnoreStack m) where
+  IgnoreStack a >>= k = IgnoreStack $ a Prelude.>>= \x -> unIgnoreStack (k x)
+
+instance (Applicative.Alternative m) => Additive (IgnoreStack m r r' a) where
+  empty = IgnoreStack Applicative.empty
+  (IgnoreStack a) <|> (IgnoreStack b) = IgnoreStack $ a Applicative.<|> b
+
+instance (Prelude.MonadFail m) => MonadFail (IgnoreStack m) where
+  fail msg = IgnoreStack $ Prelude.fail msg
 
 -- | A deriving via combinator
 newtype FromIndexed m i j a = FromIndexed (m i j a)
