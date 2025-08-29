@@ -6,7 +6,14 @@
 {-# LANGUAGE UndecidableInstances #-}
 {-# LANGUAGE UndecidableSuperClasses #-}
 
-module Control.Monad.Indexed.Lead.Generic where
+module Control.Monad.Indexed.Lead.Generic
+  ( lead,
+
+    -- * Auxiliary definitions
+    Leading,
+    CFieldsType,
+  )
+where
 
 import Control.Monad.Indexed qualified as Indexed
 import Data.Kind
