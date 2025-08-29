@@ -102,7 +102,7 @@ instance (Additive (f r r' a), Additive (g r r' a)) => Additive ((f :*: g) r r' 
   empty = empty :*: empty
   ~(a :*: a') <|> ~(b :*: b') = (a <|> b) :*: (a' <|> b')
 
-newtype IgnoreStack m i j a = IgnoreStack {unIgnoreStack :: m a}
+newtype IgnoreIndices m i j a = IgnoreIndices {unIgnoreIndices :: m a}
   deriving newtype
     ( Functor,
       Prelude.Applicative,
@@ -111,19 +111,19 @@ newtype IgnoreStack m i j a = IgnoreStack {unIgnoreStack :: m a}
       Monad.MonadPlus
     )
 
-instance (Prelude.Applicative f) => Applicative (IgnoreStack f) where
-  pure a = IgnoreStack $ Prelude.pure a
-  IgnoreStack f <*> IgnoreStack a = IgnoreStack $ f Prelude.<*> a
+instance (Prelude.Applicative f) => Applicative (IgnoreIndices f) where
+  pure a = IgnoreIndices $ Prelude.pure a
+  IgnoreIndices f <*> IgnoreIndices a = IgnoreIndices $ f Prelude.<*> a
 
-instance (Prelude.Monad m) => Monad (IgnoreStack m) where
-  IgnoreStack a >>= k = IgnoreStack $ a Prelude.>>= \x -> unIgnoreStack (k x)
+instance (Prelude.Monad m) => Monad (IgnoreIndices m) where
+  IgnoreIndices a >>= k = IgnoreIndices $ a Prelude.>>= \x -> unIgnoreIndices (k x)
 
-instance (Applicative.Alternative m) => Additive (IgnoreStack m r r' a) where
-  empty = IgnoreStack Applicative.empty
-  (IgnoreStack a) <|> (IgnoreStack b) = IgnoreStack $ a Applicative.<|> b
+instance (Applicative.Alternative m) => Additive (IgnoreIndices m r r' a) where
+  empty = IgnoreIndices Applicative.empty
+  (IgnoreIndices a) <|> (IgnoreIndices b) = IgnoreIndices $ a Applicative.<|> b
 
-instance (Prelude.MonadFail m) => MonadFail (IgnoreStack m) where
-  fail msg = IgnoreStack $ Prelude.fail msg
+instance (Prelude.MonadFail m) => MonadFail (IgnoreIndices m) where
+  fail msg = IgnoreIndices $ Prelude.fail msg
 
 -- | A deriving via combinator
 newtype FromIndexed m i j a = FromIndexed (m i j a)

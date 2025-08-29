@@ -87,8 +87,8 @@ class Stacked m where
 instance (Stacked f, Stacked g) => Stacked (f Indexed.:*: g) where
   shift_ f = (shift_ (\s fl' -> Indexed.fst_star (f s fl'))) Indexed.:*: (shift_ (\s fl' -> Indexed.snd_star (f s fl')))
 
-instance (Prelude.Applicative m) => Stacked (Indexed.IgnoreStack m) where
-  shift_ _ = Indexed.IgnoreStack $ Prelude.pure ()
+instance (Prelude.Applicative m) => Stacked (Indexed.IgnoreIndices m) where
+  shift_ _ = Indexed.IgnoreIndices $ Prelude.pure ()
 
 stack :: (Indexed.Applicative m, Stacked m) => (i -> j -> i) -> (i -> j) -> m i j ()
 stack f unr = shift_ $ \k fl -> Indexed.pure $ f fl (k (unr fl))
