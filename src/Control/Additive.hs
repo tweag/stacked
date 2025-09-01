@@ -22,9 +22,21 @@
 -- an additive flavour to them (`msum`, etc…), and situated in the `Control`
 -- hierarchy to represent that it's intended to represent choice between
 -- computations.
-module Control.Additive where
+module Control.Additive
+  ( Additive (..),
+    sum,
+
+    -- * Additives as monoids
+    Adding (..),
+
+    -- * Deriving-via combinators
+    Monoidaly (..),
+    Alternatively (..),
+  )
+where
 
 import Control.Applicative qualified as Applicative
+import Prelude hiding (sum)
 
 class Additive a where
   empty :: a
