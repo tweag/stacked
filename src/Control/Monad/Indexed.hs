@@ -5,7 +5,35 @@
 {-# LANGUAGE QualifiedDo #-}
 {-# LANGUAGE QuantifiedConstraints #-}
 
-module Control.Monad.Indexed where
+-- | This module defines the main indexed monad hierarchy and some standard
+-- indexed monad combinators. This is meant to look familiar to Haskell
+-- programmers. Notice how there is no indexed functor class as, thanks to
+-- quantified constraints, this role is played by the Prelude's 'Functor' class.
+-- Notice also how some traditional classes like 'MonadPlus' and 'Alternative'
+-- are synonyms thanks to the 'Additive' type class.
+module Control.Monad.Indexed
+  ( -- * Indexed monad hierarchy
+    Applicative (..),
+    Monad (..),
+    Alternative,
+    MonadPlus,
+    guard,
+    MonadFail (..),
+    guardF,
+
+    -- ** Deriving-via combinators
+    FromIndexed (..),
+
+    -- * Index monad combinators
+    (:*:) (..),
+    fst_star,
+    snd_star,
+    IgnoreIndices (..),
+
+    -- * Additional technical definitions
+    (>>),
+  )
+where
 
 import Control.Additive
 import Control.Applicative qualified as Applicative
