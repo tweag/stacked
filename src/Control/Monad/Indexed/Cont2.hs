@@ -92,21 +92,6 @@ instance (Comonad w) => Stacked (Cont2W w) where
 ----------------------------------------------------------------------------------------
 
 class Stacked m where
-  -- Alternative: we could have an Applicative modality `S m`, and a richer shift
-  -- shiftm :: ((S m a -> r' -> r') -> r -> m r r'' r'') -> m r r' (S m a)
-  --
-  -- `S Print = Identity`, and `S Parse = Const ()`. The latter is why we need
-  -- the modality (and why it'd need to be an attached type family). It's kind
-  -- of cool. And you could define
-  --
-  -- pop :: m (a -> i) i (S m a)
-  -- push :: S m a -> m i (a -> i)
-  --
-  -- But is uses a type family, which is always a little bit annoying I suppose.
-  --
-  -- I'm not sure it adds much expressive power, though. It wouldn't be terribly
-  -- convenient to use a value behind such a modality. You might as well just
-  -- use `shift'` honestly.
   shift_ :: ((r' -> r') -> r -> m r r'' r'') -> m r r' ()
 
 instance (Stacked f, Stacked g) => Stacked (f Indexed.:*: g) where
