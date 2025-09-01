@@ -4,7 +4,29 @@
 {-# LANGUAGE LambdaCase #-}
 {-# LANGUAGE QualifiedDo #-}
 
-module Control.Monad.Indexed.Cont2 where
+module Control.Monad.Indexed.Cont2
+  ( -- * Abstract delimited control
+    Shifty (..),
+    Stacked (..),
+    stack,
+    pop,
+    pop_,
+    push,
+    (@),
+
+    -- * Comonad-to-indexed-monad transformer
+    Cont2W (..),
+    shift0,
+    yield,
+    yield_,
+
+    -- * Bidirectional variants of traditional combinators
+    some,
+    many,
+    optional,
+    sepBy,
+  )
+where
 
 import Control.Additive
 import Control.Applicative qualified as Applicative
@@ -50,11 +72,11 @@ instance (Shifty f, Shifty g) => Shifty (f Indexed.:*: g) where
 pop :: (Indexed.Applicative m, Shifty m) => m (a -> i) i a
 pop = shift $ \k fl -> Indexed.pure (\a -> k a (fl a))
 
-run :: (Comonad w) => (w (a -> r) -> r) -> Cont2W w r r a
-run act = shift0 $ \wk fl -> Indexed.pure $ act (fmap (\k x -> k x fl) wk)
+yield :: (Comonad w) => (w (a -> r) -> r) -> Cont2W w r r a
+yield act = shift0 $ \wk fl -> Indexed.pure $ act (fmap (\k x -> k x fl) wk)
 
-run' :: (Comonad w) => (w r -> r) -> Cont2W w r r ()
-run' act = shift0 $ \wk fl -> Indexed.pure $ act (fmap (\k -> k () fl) wk)
+yield_ :: (Comonad w) => (w r -> r) -> Cont2W w r r ()
+yield_ act = shift0 $ \wk fl -> Indexed.pure $ act (fmap (\k -> k () fl) wk)
 
 instance Additive (Cont2W w r r' a) where
   empty = Cont2W $ \_ fl -> fl
