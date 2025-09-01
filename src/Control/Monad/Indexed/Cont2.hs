@@ -57,7 +57,7 @@ instance (Comonad w) => Indexed.Monad (Cont2W w) where
       k' wk x = runCont2W (f x) wk
 
 shift0 :: (Comonad w) => (w (a -> r' -> r') -> r -> Cont2W w r k k) -> Cont2W w r r' a
-shift0 f = Cont2W $ \wk fl -> runCont2W (f wk fl) ((\_k -> \x _ -> x) <$> wk) fl
+shift0 f = Cont2W $ \wk fl -> runCont2W (f wk fl) ((\_k x _ -> x) <$> wk) fl
 
 class (Stacked m) => Shifty m where
   shift :: ((a -> r' -> r') -> r -> m r k k) -> m r r' a
