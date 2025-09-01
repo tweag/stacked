@@ -104,7 +104,7 @@ stack :: (Indexed.Applicative m, Stacked m) => (i -> j -> i) -> (i -> j) -> m i 
 stack f unr = shift_ $ \k fl -> Indexed.pure $ f fl (k (unr fl))
 
 (@) :: (Indexed.Applicative m, Stacked m) => m (a -> i) j b -> a -> m i j b
-act @ a = stack (\_ s -> s a) (\s _ -> s) *> act
+act @ a = push a *> act
 
 infixl 9 @
 
