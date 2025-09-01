@@ -18,7 +18,8 @@ module Control.Monad.Indexed
     Alternative,
     MonadPlus,
     guard,
-    MonadFail (..),
+    Fail (..),
+    MonadFail,
     guardF,
 
     -- ** Deriving-via combinators
@@ -66,10 +67,12 @@ class (Applicative m, forall i. Prelude.Monad (m i i)) => Monad m where
 -- | This class is mainly used for the qualified `do`-notation, as described in
 -- the documentation for 'Prelude.MonadFail'. Occasionally used to fail with an
 -- error message in monads which support it, see for instance 'guardF' below.
-class (Monad m) => MonadFail m where
+class Fail m where
   fail :: String -> m i j a
 
-guardF :: (MonadFail m) => Bool -> String -> m i i ()
+type MonadFail m = (Monad m, Fail m)
+
+guardF :: (Applicative m, Fail m) => Bool -> String -> m i i ()
 guardF True _ = pure ()
 guardF False msg = fail msg
 
@@ -117,7 +120,7 @@ instance (Monad f, Monad g) => Monad (f :*: g) where
     (a >>= \x -> let (r :*: _) = k x in r)
       :*: (b >>= \y -> let (_ :*: s) = k y in s)
 
-instance (MonadFail f, MonadFail g) => MonadFail (f :*: g) where
+instance (Fail f, Fail g) => Fail (f :*: g) where
   fail msg = fail msg :*: fail msg
 
 instance (Applicative.Alternative (f i j), Applicative.Alternative (g i j)) => Applicative.Alternative ((f :*: g) i j) where
@@ -150,7 +153,7 @@ instance (Applicative.Alternative m) => Additive (IgnoreIndices m r r' a) where
   empty = IgnoreIndices Applicative.empty
   (IgnoreIndices a) <|> (IgnoreIndices b) = IgnoreIndices $ a Applicative.<|> b
 
-instance (Prelude.MonadFail m) => MonadFail (IgnoreIndices m) where
+instance (Prelude.MonadFail m) => Fail (IgnoreIndices m) where
   fail msg = IgnoreIndices $ Prelude.fail msg
 
 -- | A deriving via combinator
