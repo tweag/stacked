@@ -6,12 +6,20 @@ cabal-version: 1.12
 
 name:           stacked
 version:        0.1.0
+synopsis:       A modern indexed monad stack
+homepage:       https://github.com/tweag/pup#readme
+bug-reports:    https://github.com/tweag/pup/issues
 author:         Arnaud Spiwack
 maintainer:     arnaud.spiwack@tweag.io
-copyright:      MIT
+copyright:      (c) Modus Create LLC and its affiliates
 license:        MIT
 license-file:   LICENSE
 build-type:     Simple
+
+source-repository head
+  type: git
+  location: https://github.com/tweag/pup
+  subdir: stacked
 
 library
   exposed-modules:
@@ -21,8 +29,6 @@ library
       Control.Monad.Indexed.Cont2
       Control.Monad.Indexed.Lead.Generic
       Control.Monad.Indexed.Lead.Labels
-  other-modules:
-      Paths_stacked
   hs-source-dirs:
       src
   ghc-options: -Wall
