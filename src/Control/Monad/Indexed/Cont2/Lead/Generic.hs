@@ -6,7 +6,7 @@
 {-# LANGUAGE UndecidableInstances #-}
 {-# LANGUAGE UndecidableSuperClasses #-}
 
-module Control.Monad.Indexed.Lead.Generic
+module Control.Monad.Indexed.Cont2.Lead.Generic
   ( lead,
 
     -- * Auxiliary definitions

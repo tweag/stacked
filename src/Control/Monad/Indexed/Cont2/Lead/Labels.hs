@@ -7,11 +7,11 @@
 --
 -- Because of the very generic type of the 'IsLabel' instance, importing this
 -- module will probably interfere with other uses of `OverloadedLabels`.
-module Control.Monad.Indexed.Lead.Labels where
+module Control.Monad.Indexed.Cont2.Lead.Labels where
 
 import Control.Monad.Indexed qualified as Indexed
 import Control.Monad.Indexed.Cont2 qualified as Cont2
-import Control.Monad.Indexed.Lead.Generic
+import Control.Monad.Indexed.Cont2.Lead.Generic
 import GHC.Generics
 import GHC.OverloadedLabels
 

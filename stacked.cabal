@@ -27,8 +27,8 @@ library
       Control.Monad.Indexed
       Control.Monad.Indexed.Cont
       Control.Monad.Indexed.Cont2
-      Control.Monad.Indexed.Lead.Generic
-      Control.Monad.Indexed.Lead.Labels
+      Control.Monad.Indexed.Cont2.Lead.Generic
+      Control.Monad.Indexed.Cont2.Lead.Labels
   hs-source-dirs:
       src
   ghc-options: -Wall
