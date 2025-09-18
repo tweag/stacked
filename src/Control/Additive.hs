@@ -7,12 +7,12 @@
 -- preferring to define another class is that applicatives have a natural Monoid
 -- instance:
 --
--- > instance (Applicative f, Monoid a) => Applicative (f a) where
+-- > instance (Applicative f, Monoid a) => Monoid (f a) where
 -- >   mempty = pure mempty
 -- >   (<>) = liftA2 (<>)
 --
--- In Base, the 'Monoid' instances for 'ST', 'IO', and 'STM' are defined like
--- this, and that of 'Maybe a' and 'Cont a b' are of a similar nature. See also
+-- In Base, the 'Monoid' instances for 'Control.Monad.ST.ST', 'IO', and 'GHC.Conc.STM' are defined like
+-- this, and that of @'Maybe' a@ and @'Data.Functor.Const.Const' a b@ are of a similar nature. See also
 -- 'Data.Monoid.Ap'.
 --
 -- So we typically want a second one. An approach would be to give a monoid

@@ -3,10 +3,12 @@
 {-# OPTIONS_GHC -Wno-simplifiable-class-constraints #-}
 
 -- | Import and use with `OverloadedLabels` to use labels as name for (generic)
--- constructor leads. That is `#MkT` instead of `lead @"MkT"`.
+-- constructor leads. That is @#MkT@ instead of 'lead' @@\"MkT\"@.
 --
 -- Because of the very generic type of the 'IsLabel' instance, importing this
--- module will probably interfere with other uses of `OverloadedLabels`.
+-- module isn't unlikely to interfere with other uses of `OverloadedLabels`.
+-- This is why it's defined in a separate module from
+-- "Control.Monad.Indexed.Cont2.Lead.Generic".
 module Control.Monad.Indexed.Cont2.Lead.Labels () where
 
 import Control.Monad.Indexed qualified as Indexed

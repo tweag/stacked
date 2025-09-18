@@ -6,6 +6,59 @@
 {-# LANGUAGE UndecidableInstances #-}
 {-# LANGUAGE UndecidableSuperClasses #-}
 
+-- | Leads are a concept which emerge from the bidirectional aspect of stacked
+-- applicatives and monads. This module defines leads generically for every
+-- constructor of a type with a 'Generic' instance (see 'lead' below).
+--
+-- == What is a lead?
+--
+-- When implementing a traversal with regular applicative functors, we write
+-- things like
+--
+-- > foo :: (Applicative f) => (a -> f b) -> Maybe a -> f (Maybe b)
+-- > foo f (Just a) = Just <$> f a
+-- > foo _ Maybe = Maybe
+--
+-- With stacked applicatives, however, the argument is on the abstract stack,
+-- rather than a proper argument to the function. That is we want a function:
+--
+-- > bar :: (Indexed.Applicative m, Stacked m)
+-- >     => m (a -> r) r b -> m (Maybe a -> r) r (Maybe b)
+--
+-- So we have to provide a way to pattern-match on the the top element of the
+-- stack. This is what lead provide. Leads are effectful actions, because they
+-- can fail, representing each constructor. Because they're effectful they are
+-- used with @(<*>)@ rather than @(<$>)@ like constructors are. So that @bar@
+-- would be implemented as
+--
+-- > bar f =
+-- >   lead @"Just" <*> f
+-- >   <|> lead @None
+--
+-- Or, with @OverloadedLabels@ and "Control.Monad.Indexed.Cont2.Lead.Labels",
+--
+-- > bar f =
+-- >   #Just <*> f
+-- >   <|> #None
+--
+-- The strength of stacked applicatives (or monads) is that leads extend to
+-- constructors with several fields in much the same way as regular applicatives
+-- do.
+--
+-- > data OneOrTwo a b = One a | Two a b
+-- >   deriving (Generic)
+-- >
+-- > baz :: (Indexed.Applicative m, Stacked m)
+-- >     => m (a -> r) r b -> m (OneOrTwo a a -> r) r (OneOrTwo b b)
+-- > baz f =
+-- >   #One <*> f
+-- >   <|> #Two <*> f <*> f
+-- >
+-- > baz2 :: (Indexed.Applicative m, Stacked m)
+-- >      => m (a -> r) r a' -> m (b -> r) r b' -> m (OneOrTwo a b -> r) r (OneOrTwo a' b')
+-- > baz2 f g =
+-- >   #One <*> f
+-- >   <|> #Two <*> f <*> g
 module Control.Monad.Indexed.Cont2.Lead.Generic
   ( lead,
 
@@ -33,8 +86,22 @@ class Leading c t where
 
 -- the_constr :: CFieldsType c (Rep t ()) tgt
 
--- |
--- == __Manual definitions_
+-- | 'lead' @C@ is the lead for any constructor @C@ of a 'Generic' data type.
+-- For instance
+--
+-- > lead @Just :: m (Maybe a -> r) (a -> r) (b -> Maybe b)
+--
+-- With @OverloadedLabels@ and "Control.Monad.Indexed.Cont2.Lead.Labels", this
+-- can be written simply @#Just@ instead.
+--
+-- For a constructors with several arguments the type would be
+--
+-- > data OneOrTwo a b = One a | Two a b
+-- >   deriving (Generic)
+-- >
+-- > lead @Two :: m (OneOrTwo a b -> r) (a -> b -> r) (c -> d -> OneOrTwo c d)
+--
+-- == __Manual definitions__
 -- Here are some manual, specialised, definitions of 'lead' for inspiration if
 -- the generic derivation aren't enough.
 --
@@ -42,6 +109,16 @@ class Leading c t where
 -- > lead @True = Indexed.do
 -- >   Cont2.stack (\cases _ k True -> k; fl _ b -> fl b) (\k -> k True)
 -- >   Indexed.pure True
+--
+-- > lead @Just :: (Indexed.MonadPlus m, Cont2.Stacked m) => m (Maybe a -> r) (a -> r) (b -> Maybe b)
+-- > lead @Just = Indexed.do
+-- >   Cont2.stack (\cases _ k (Just a) -> k a; fl _ b -> fl b) (\k a -> k (Just a))
+-- >   Indexed.pure Just
+--
+-- > lead @Two :: (Indexed.MonadPlus m, Cont2.Stacked m) => m (OneOrTwo a b -> r) (a -> b -> r) (c -> d -> OneOrTwo c d)
+-- > lead @Two = Indexed.do
+-- >   Cont2.stack (\cases _ k (Two a b) -> k a b; fl _ b -> fl b) (\k a b -> k (Two a b))
+-- >   Indexed.pure Two
 lead :: forall c t r m. (Leading c t, Indexed.MonadPlus m, Cont2.Stacked m) => m (t -> r) (CFieldsType c (Rep t ()) r) (CFieldsType c (Rep t ()) t)
 lead = Indexed.do
   Cont2.stack (match @c @t @r) (unmatch @c @t @r)

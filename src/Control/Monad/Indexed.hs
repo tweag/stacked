@@ -26,9 +26,13 @@ module Control.Monad.Indexed
     FromIndexed (..),
 
     -- * Index monad combinators
+
+    -- ** Product of indexed gadgets
     (:*:) (..),
     fst_star,
     snd_star,
+
+    -- ** Lift non-indexed gadgets to indexed
     IgnoreIndices (..),
 
     -- * Additional technical definitions
@@ -84,7 +88,7 @@ guard False = empty
 
 type MonadPlus m = (Monad m, forall r r' a. Additive (m r r' a))
 
--- | For `QualifiedDo` notation
+-- | Synonym of '*>' used for `QualifiedDo` notation.
 (>>) :: (Applicative m) => m i j () -> m j k a -> m i k a
 (>>) = (*>)
 
