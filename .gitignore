@@ -1,0 +1,35 @@
+### Our generated stuff ###
+doc/article/pup.pdf
+
+### Pre-commit hook ###
+/.pre-commit-config.yaml
+
+# Created by https://www.toptal.com/developers/gitignore/api/haskell,latex
+# Edit at https://www.toptal.com/developers/gitignore?templates=haskell,latex
+
+### Haskell ###
+dist
+dist-*
+cabal-dev
+*.o
+*.hi
+*.hie
+*.chi
+*.chs.h
+*.dyn_o
+*.dyn_hi
+.hpc
+.hsenv
+.cabal-sandbox/
+cabal.sandbox.config
+*.prof
+*.aux
+*.hp
+*.eventlog
+.stack-work/
+cabal.project.local
+cabal.project.local~
+.HTF/
+.ghc.environment.*
+
+# End of https://www.toptal.com/developers/gitignore/api/haskell,latex

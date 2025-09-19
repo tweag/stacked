@@ -1,0 +1,11 @@
+# One CLI to format the code tree - https://github.com/numtide/treefmt
+
+[formatter.haskell]
+# Formatter to run
+command = "ormolu"
+# Command-line arguments for the command
+options = ["-i"]
+# Glob pattern of files to include
+includes = [ "*.hs" ]
+# Glob patterns of files to exclude
+excludes = []

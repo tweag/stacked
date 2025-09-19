@@ -1,0 +1,16 @@
+# HLint configuration file
+# https://github.com/ndmitchell/hlint
+##########################
+
+# This file contains a template configuration file, which is typically
+# placed as .hlint.yaml in the root of your project
+
+# Deactivate hints by default
+- ignore: {}
+# White list hints
+- warn: {name: "Use LANGUAGE pragmas"}
+- warn: {name: "Use fewer LANGUAGE pragmas"}
+- warn: {name: "Unused LANGUAGE pragma"}
+- warn: {name: "Missing NOINLINE pragma"}
+- warn: {name: "Fix pragma markup"}
+- warn: {name: "Use pragma syntax"}
