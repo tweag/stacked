@@ -7,6 +7,7 @@ cabal-version: 1.12
 name:           stacked
 version:        0.1.0
 synopsis:       A modern indexed monad stack
+description:    Please see README.md.
 homepage:       https://github.com/tweag/pup#readme
 bug-reports:    https://github.com/tweag/pup/issues
 author:         Arnaud Spiwack

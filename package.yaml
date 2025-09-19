@@ -4,6 +4,7 @@ name:                stacked
 version:             0.1.0
 author:              ["Arnaud Spiwack"]
 synopsis:            "A modern indexed monad stack"
+description:         "Please see README.md."
 maintainer:          arnaud.spiwack@tweag.io
 
 github: tweag/pup/stacked
