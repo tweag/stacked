@@ -8,8 +8,8 @@ name:           stacked
 version:        0.1.0
 synopsis:       A modern indexed monad stack
 description:    Please see README.md.
-homepage:       https://github.com/tweag/pup#readme
-bug-reports:    https://github.com/tweag/pup/issues
+homepage:       https://github.com/tweag/stacked#readme
+bug-reports:    https://github.com/tweag/stacked/issues
 author:         Arnaud Spiwack
 maintainer:     arnaud.spiwack@tweag.io
 copyright:      (c) Modus Create LLC and its affiliates
@@ -19,8 +19,7 @@ build-type:     Simple
 
 source-repository head
   type: git
-  location: https://github.com/tweag/pup
-  subdir: stacked
+  location: https://github.com/tweag/stacked
 
 library
   exposed-modules:
