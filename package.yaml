@@ -12,7 +12,7 @@ copyright: "(c) Modus Create LLC and its affiliates"
 language: GHC2021
 
 dependencies:
-  - base
+  - base >= 4.19 && < 4.22
   - comonad
   - mtl
   - megaparsec
