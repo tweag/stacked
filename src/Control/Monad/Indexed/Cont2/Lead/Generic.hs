@@ -33,7 +33,7 @@
 --
 -- > bar f =
 -- >   lead @"Just" <*> f
--- >   <|> lead @None
+-- >   <|> lead @Nothing
 --
 -- Or, with @OverloadedLabels@ and "Control.Monad.Indexed.Cont2.Lead.Labels",
 --
