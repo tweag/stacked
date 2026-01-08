@@ -16,6 +16,8 @@ copyright:      (c) Modus Create LLC and its affiliates
 license:        MIT
 license-file:   LICENSE
 build-type:     Simple
+extra-source-files:
+    README.md
 
 source-repository head
   type: git

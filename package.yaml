@@ -12,6 +12,9 @@ copyright: "(c) Modus Create LLC and its affiliates"
 
 language: GHC2021
 
+extra-source-files:
+  - README.md
+
 dependencies:
   - base >= 4.19 && < 4.22
   - comonad
