@@ -33,7 +33,8 @@ clean-ups that modern Haskell affords.
 
 - Stacked has a rich sublibrary on continuation indexed monads and their
   relation with delimited control. This part of the library was developed to
-  serve the needs of the Pup library.
+  serve the needs of the [Pup library][pup].
 
 [mcbride-ixmonad]: https://stackoverflow.com/questions/28690448/what-is-indexed-monad#28696299
 [qualified-do]: https://downloads.haskell.org/ghc/latest/docs/users_guide/exts/qualified_do.html#extension-QualifiedDo
+[pup]: https://hackage.haskell.org/package/pup
