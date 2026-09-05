@@ -16,7 +16,7 @@ For instance
   [qualified do notation][qualified-do].
 - But there is no indexed functor class defined in this library because, thanks
   to quantified constraints, the standard functor class suffices. The functor
-  super-class for indexed applicative looks like `(forall i j. Functor f i j) =>
+  super-class for indexed applicative looks like `(forall i j. Functor (f i j)) =>
   …`
 - We also take the opportunity of growing the stack from scratch to define a
   single `Additive` class to replace `Alternative` and `MonadPlus`. We then
